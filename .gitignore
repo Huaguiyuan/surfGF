@@ -1,0 +1,7 @@
+*.dat
+.idea/*
+CONTCAR
+input*
+__pycache__
+*.prof
+

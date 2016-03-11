@@ -1,0 +1,30 @@
+
+#the iteration number: 
+minimum_iteration: 12
+maximum_iteration: 20
+
+#convergence criterion: 
+convergence: 0.00000001
+
+#DOS calculation
+smearing: 0.001
+
+#######################
+slab_direction: [0, 0, 1]
+principle_layer_thickness : 3
+#######################
+
+energy_div_num: 200
+
+minimum_energy: 4.1414
+maximum_energy: 4.8414
+
+#######################
+
+k-point_div_num: 100 
+
+k-point_line_number: 2 
+kpath:
+ - [-0.333, 0.667, 0]
+ - [0, 0, 0]
+ - [0, 0.5, 0]
