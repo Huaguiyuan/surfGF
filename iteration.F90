@@ -3,7 +3,7 @@ MODULE iteration
 IMPLICIT none
 CONTAINS
 
-SUBROUTINE iterate(g, alpha, beta, e, es, omega, smearing, prec, max_step, rank)
+SUBROUTINE iterate(eout, esout, alpha, beta, e, es, omega, smearing, prec, max_step, rank)
     INTEGER, PARAMETER :: dp = kind(1.0d0)
     REAL(kind=dp) :: omega, smearing, prec
     INTEGER :: max_step, step, rank, cnt
@@ -24,6 +24,7 @@ SUBROUTINE iterate(g, alpha, beta, e, es, omega, smearing, prec, max_step, rank)
         beta = matmul(beta, matmul(green, beta))
         step = step + 1
     ENDDO
+    print *, step
     eout = e
     esout = es
 END SUBROUTINE iterate

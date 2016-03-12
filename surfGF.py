@@ -79,7 +79,6 @@ def spectral_weight(g, omega, epsilons, smearing=0.01):
     surf_spectralN = -1.0 / np.pi * np.imag(g00)
     return surf_spectralN
 
-@profile
 def per_k(g, kpt):
     H00, H01 = construct_H00_H01(g, kpt)
 
