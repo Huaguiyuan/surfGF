@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.linalg as LA
 from read_input import *
+import iteration
 
 
 def point_scale(pt, a):
@@ -64,23 +65,6 @@ def construct_H00_H01(g, kpt):
     return H00, H01
 
 
-def iterative_method(alpha0, beta0, epsilon0, epsilons0, omega, smearing=0.01, precision=0.01, min_step=12, max_step=20,
-                     flag=0):
-    m, n = np.shape(epsilon0)
-    Omega = np.eye(m, dtype=np.complex) * (omega + smearing * 1j)
-    green = LA.inv(Omega - epsilon0)
-    alpha = np.dot(alpha0, np.dot(green, alpha0))
-    beta = np.dot(beta0, np.dot(green, beta0))
-    epsilon = epsilon0 + np.dot(alpha0, np.dot(green, beta0)) + np.dot(beta0, np.dot(green, alpha0))
-    epsilons = epsilons0 + np.dot(alpha0, np.dot(green, beta0))
-
-    while np.max(np.abs(epsilon - epsilon0)) > precision and np.max(
-            np.abs(epsilons - epsilons0)) > precision and flag < max_step or flag < min_step:
-        flag += 1
-        return iterative_method(alpha, beta, epsilon, epsilons, omega, smearing, precision, min_step, max_step, flag)
-    return epsilon, epsilons, flag
-
-
 def spectral_weight(g, omega, epsilons, smearing=0.01):
     m = np.shape(epsilons)
 
@@ -104,12 +88,10 @@ def per_k(g, kpt):
     surf_spectralN = []
     for i in range(g.dict['energy_div_num'] + 1):
         omega = g.eng_list[i]
-        epsilon, epsilons, flag = iterative_method(alpha0, beta0, epsilon0, epsilon0, omega,
-                                                   smearing=g.dict['smearing'], precision=g.dict['convergence'],
-                                                   min_step=g.dict['minimum_iteration'],
+        epsilon, epsilons= iteration.iteration.iterate(alpha0, beta0, epsilon0, epsilon0, omega,
+                                                   smearing=g.dict['smearing'], prec=g.dict['convergence'],
                                                    max_step=g.dict['maximum_iteration'])
 
         surf_spectralN.append(spectral_weight(g, omega, epsilons, smearing=g.dict['smearing']))
-        print(flag)
 
     return surf_spectralN

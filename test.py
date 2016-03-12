@@ -38,8 +38,7 @@ surf_spectralN=[]
 for i in range(len(eng_list)):
 
     omega = eng_list[i]
-    epsilon, epsilons, flag = iterative_method(alpha0, beta0, epsilon0, epsilon0,omega,smearing = g.dict['smearing'], precision = g.dict['convergence'], min_step=g.dict['minimum_iteration'],max_step=g.dict['maximum_iteration'])
-    print(flag)
+    epsilon, epsilons = iteration.iteration.iterate(alpha0, beta0, epsilon0, epsilon0,omega,smearing = g.dict['smearing'], prec = g.dict['convergence'], max_step=g.dict['maximum_iteration'])
     surf_spectralN.append(spectral_weight(g,omega,epsilons, smearing = g.dict['smearing']))
 
 print(surf_spectralN)
