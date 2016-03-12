@@ -4,4 +4,4 @@ CONTCAR
 input*
 __pycache__
 *.prof
-
+*.so

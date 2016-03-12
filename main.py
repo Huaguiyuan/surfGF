@@ -1,9 +1,9 @@
 import numpy as np
 import numpy.linalg as LA
-from read_input import *
+from input import *
 from surfGF import *
 
-g = GF()
+g = Input()
 surf_spectral = []
 
 g.klist = [[0,0,0],[1,1,1]]

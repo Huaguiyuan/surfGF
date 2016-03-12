@@ -1,6 +1,6 @@
 import numpy as np
 import numpy.linalg as LA
-from read_input import *
+from input import *
 import iteration
 
 

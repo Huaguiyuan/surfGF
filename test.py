@@ -1,9 +1,9 @@
 import numpy as np
 import numpy.linalg as LA
-from read_input import *
+from input import *
 from surfGF import *
 
-g = GF()
+g = Input()
 #print(g.b)
 kpt = [0,0.041667,0]
 #kpt = [0.1 ,0.2 ,0]
