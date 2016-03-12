@@ -14,7 +14,7 @@ slab_direction: [0, 0, 1]
 principle_layer_thickness : 3
 #######################
 
-energy_div_num: 200
+energy_div_num: 10
 
 minimum_energy: 4.1414
 maximum_energy: 4.8414

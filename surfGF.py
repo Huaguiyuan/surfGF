@@ -70,6 +70,7 @@ def spectral_weight(g, omega, epsilons, smearing=0.01):
 
     Omega = np.eye(m[0], dtype=np.complex) * (omega + smearing * 1j)
     G00 = LA.inv(Omega - epsilons)
+    #G00 = iteration.iteration.zinverse(Omega - epsilons)
 
     g00 = 0
     for i in range(g.num_wann):
@@ -78,7 +79,7 @@ def spectral_weight(g, omega, epsilons, smearing=0.01):
     surf_spectralN = -1.0 / np.pi * np.imag(g00)
     return surf_spectralN
 
-
+@profile
 def per_k(g, kpt):
     H00, H01 = construct_H00_H01(g, kpt)
 
@@ -86,11 +87,12 @@ def per_k(g, kpt):
     alpha0 = H01
     beta0 = H01.conj().T
     surf_spectralN = []
+    max_step = g.dict['maximum_iteration']
+    smearing=g.dict['smearing']
+    prec=g.dict['convergence']
     for i in range(g.dict['energy_div_num'] + 1):
         omega = g.eng_list[i]
-        epsilon, epsilons= iteration.iteration.iterate(alpha0, beta0, epsilon0, epsilon0, omega,
-                                                   smearing=g.dict['smearing'], prec=g.dict['convergence'],
-                                                   max_step=g.dict['maximum_iteration'])
+        epsilon, epsilons= iteration.iteration.iterate(alpha0, beta0, epsilon0, epsilon0, omega, smearing, prec, max_step)
 
         surf_spectralN.append(spectral_weight(g, omega, epsilons, smearing=g.dict['smearing']))
 
