@@ -1,7 +1,7 @@
 *.dat
 .idea/*
 CONTCAR
-input*
+input_*
 __pycache__
 *.prof
 *.so

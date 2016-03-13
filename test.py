@@ -1,6 +1,6 @@
 import numpy as np
 import numpy.linalg as LA
-from input import *
+from inputGF import *
 from surfGF import *
 
 g = Input()

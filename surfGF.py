@@ -1,8 +1,7 @@
 import numpy as np
 import numpy.linalg as LA
-from input import *
+from inputGF import *
 import iteration
-
 
 def point_scale(pt, a):
     # point_scale, including rpt and kpt, if it is rpt, put a as lattice, if it is kpt, put a as inversed lattice
@@ -64,35 +63,14 @@ def construct_H00_H01(g, kpt):
 
     return H00, H01
 
-
-def spectral_weight(g, omega, epsilons, smearing=0.01):
-    m = np.shape(epsilons)
-
-    Omega = np.eye(m[0], dtype=np.complex) * (omega + smearing * 1j)
-    G00 = LA.inv(Omega - epsilons)
-    #G00 = iteration.iteration.zinverse(Omega - epsilons)
-
-    g00 = 0
-    for i in range(g.num_wann):
-        g00 += G00[i, i]
-
-    surf_spectralN = -1.0 / np.pi * np.imag(g00)
-    return surf_spectralN
-
 def per_k(g, kpt):
     H00, H01 = construct_H00_H01(g, kpt)
-
     epsilon0 = H00
     alpha0 = H01
     beta0 = H01.conj().T
-    surf_spectralN = []
     max_step = g.dict['maximum_iteration']
     smearing=g.dict['smearing']
     prec=g.dict['convergence']
-    for i in range(g.dict['energy_div_num'] + 1):
-        omega = g.eng_list[i]
-        epsilon, epsilons= iteration.iteration.iterate(alpha0, beta0, epsilon0, epsilon0, omega, smearing, prec, max_step)
-
-        surf_spectralN.append(spectral_weight(g, omega, epsilons, smearing=g.dict['smearing']))
-
-    return surf_spectralN
+    g00_list = iteration.iteration.iterate_k(alpha0, beta0, epsilon0, epsilon0, g.eng_list, smearing, prec, max_step)
+    surf_spectral = -1.0/np.pi * np.imag(np.trace(g00_list[0:g.num_wann,0:g.num_wann, :]))
+    return surf_spectral
