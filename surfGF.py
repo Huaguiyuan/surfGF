@@ -3,6 +3,7 @@ import numpy.linalg as LA
 from inputGF import *
 import iteration
 
+
 def point_scale(pt, a):
     # point_scale, including rpt and kpt, if it is rpt, put a as lattice, if it is kpt, put a as inversed lattice
     pt_scaled = a[0, :] * pt[0] + a[1, :] * pt[1] + a[2, :] * pt[2]
@@ -52,16 +53,17 @@ def construct_H00_H01(g, kpt):
             if atom_layer[num_atom_layer] != 'None':
                 for k in atom_layer[num_atom_layer]:
                     hamij += np.exp(1j * np.dot(point_scale(kpt, g.b), point_scale(g.rpt[k], g.a))) * (
-                    g.hamr[:, :, k] + 1j * g.hami[:, :, k])  # *g.weight[k]
+                        g.hamr[:, :, k] + 1j * g.hami[:, :, k])  # *g.weight[k]
             H00[g.num_wann * i:g.num_wann * (i + 1), g.num_wann * j:g.num_wann * (j + 1)] = hamij
 
             if atom_layer1[num_atom_layer1] != 'None':
                 for k1 in atom_layer1[num_atom_layer1]:
                     hamij1 += np.exp(1j * np.dot(point_scale(kpt, g.b), point_scale(g.rpt[k1], g.a))) * (
-                    g.hamr[:, :, k1] + 1j * g.hami[:, :, k1])  # *g.weight[k]
+                        g.hamr[:, :, k1] + 1j * g.hami[:, :, k1])  # *g.weight[k]
             H01[g.num_wann * i:g.num_wann * (i + 1), g.num_wann * j:g.num_wann * (j + 1)] = hamij1
 
     return H00, H01
+
 
 def per_k(g, kpt):
     H00, H01 = construct_H00_H01(g, kpt)
@@ -69,8 +71,24 @@ def per_k(g, kpt):
     alpha0 = H01
     beta0 = H01.conj().T
     max_step = g.dict['maximum_iteration']
-    smearing=g.dict['smearing']
-    prec=g.dict['convergence']
-    g00_list = iteration.iteration.iterate_k(alpha0, beta0, epsilon0, epsilon0, g.eng_list, smearing, prec, max_step)
-    surf_spectral = -1.0/np.pi * np.imag(np.trace(g00_list[0:g.num_wann,0:g.num_wann, :]))
-    return surf_spectral
+    smearing = g.dict['smearing']
+    prec = g.dict['convergence']
+    num_wann = g.num_wann
+    g00_list = iteration.iteration.iterate_k(alpha0, beta0, epsilon0, epsilon0, g.eng_list, smearing, prec,
+                                             max_step)  # array
+    surf_spectral = -1.0 / np.pi * np.imag(np.trace(g00_list[0:num_wann, 0:num_wann, :]))
+
+    # surface potential modified
+    a, b, c = np.shape(g00_list)
+    g00_modified_list = np.zeros((a, b, c), dtype='complex')
+    V = g.dict['surface_potential']
+    surf_spectral_modified = np.zeros((c,))
+    if V != None and V != 0:
+        eye_matrix = np.eye(a, dtype='complex')
+        for i in range(c):
+            temp = LA.inv((g.eng_list[i] + 1j * smearing - V) * eye_matrix
+                          - H00 - np.dot(alpha0, np.dot(g00_list[:, :, i], beta0)))
+            g00_modified_list[:, :, i] = temp
+        surf_spectral_modified = -1.0 / np.pi * np.imag(np.trace(g00_modified_list[0:num_wann, 0:num_wann, :]))
+
+    return surf_spectral, surf_spectral_modified
