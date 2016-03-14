@@ -9,14 +9,19 @@ class Input:
         self.b = self.get_b(self.a)
         self.weight, self.rpt, self.hamr, self.hami = self.read_hr()  # hamr dimension: num_wann *num_wann*nrpt
         self.dict = self.read_input()
-        self.klist = self.gen_klist(self.dict['k-point_div_num'], self.dict['kpath'])
+        if self.dict['mode'] == 'band':
+            self.klist = self.gen_klist_from_kpath(self.dict['k-point_div_num'], self.dict['kpath'])
+            self.eng_list = self.gen_eng_list(self.dict['minimum_energy'], self.dict['maximum_energy'],
+                                          self.dict['energy_div_num'])
+        elif self.dict['mode'] == 'fermi':
+            self.klist = self.gen_klist_from_bz(self.dict['k_num'], self.dict['k_vertex'])
+            self.eng_list = [self.dict['constant_energy']]
         m = np.shape(self.hamr)
         self.num_wann = m[0]
 
         m = np.shape(self.rpt)
         self.nrpt = m[0]
-        self.eng_list = self.gen_eng_list(self.dict['minimum_energy'], self.dict['maximum_energy'],
-                                          self.dict['energy_div_num'])
+
         self.kd = self.get_k_distance(self.klist)
 
     def get_b(self, a):  # this funciton is to get reciprocal lattice from primitive lattice
@@ -85,7 +90,7 @@ class Input:
         dict = yaml.load(config)
         return dict
 
-    def gen_klist(self, num, kpath):  # num per line
+    def gen_klist_from_kpath(self, num, kpath):  # num per line
         kx = []
         ky = []
         kz = []
@@ -97,6 +102,26 @@ class Input:
         for i in range(len(kx)):
             klist.append([kx[i], ky[i], kz[i]])
 
+        return klist
+
+    def gen_klist_from_bz(self, num, k_vertex):
+        n = [1, 1, 1]
+        if isinstance(num, int):
+            n = [x * num for x in n]
+        elif len(num) == 3:
+            n = num
+        elif len(num) != 1 or len(num) != 3:
+            print('WARNING, k_vertex input must be 1-dim or 3-dim, change to k_num[0] * k_num[0] * k_num[0]')
+            n = n * num[0]
+
+        kx = sorted(set(np.linspace(k_vertex[0][0], k_vertex[1][0], n[0] + 1)))
+        ky = sorted(set(np.linspace(k_vertex[0][1], k_vertex[1][1], n[1] + 1)))
+        kz = sorted(set(np.linspace(k_vertex[0][2], k_vertex[1][2], n[2] + 1)))
+        klist = []
+        for i in range(len(kx)):
+            for j in range(len(ky)):
+                for k in range(len(kz)):
+                    klist.append([kx[i], ky[j], kz[k]])
         return klist
 
     def gen_eng_list(self, eng_min, eng_max, num):
@@ -111,3 +136,6 @@ class Input:
                 klist[i + 1][2] - klist[i][2]) ** 2)
             kd.append(tmp)
         return kd
+
+#g = Input()
+#g.gen_klist_from_bz(g.dict['k_num'], g.dict['k_vertex'])

@@ -8,23 +8,31 @@ convergence: 0.00000001
 
 #DOS calculation
 smearing: 0.001
-
+surface_potential : 0.0
 #######################
 slab_direction: [0, 0, 1]
 principle_layer_thickness : 3
 #######################
-
-energy_div_num: 10
+mode: fermi   #band or fermi mode
+energy_div_num: 1
 
 minimum_energy: 4.1414
 maximum_energy: 4.8414
 
 #######################
 
-k-point_div_num: 100 
+k-point_div_num: 10
 
 k-point_line_number: 2 
 kpath:
  - [-0.333, 0.667, 0]
  - [0, 0, 0]
  - [0, 0.5, 0]
+#######################
+#WARNING: THE TWO MODE CANNOT BE USED THE SAME TIME
+
+constant_energy : 4.1414
+k_num: 5
+k_vertex:
+ - [-0.5, -0.5, 0]
+ - [0.5, 0.5, 0]

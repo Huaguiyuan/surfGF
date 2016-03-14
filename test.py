@@ -5,14 +5,16 @@ from surfGF import *
 
 g = Input()
 
-klist = [[0,0.041667,0]]
 
+#klist = [[0,0.041667,0]]
 
 eng_list = [4.1414, 4.4914, 4.6419]
+
+
 surf_spectral=[]
 surf_modified_spectral = []
 
-for kpt in klist:
+for kpt in g.klist:
     H00, H01 = construct_H00_H01(g, kpt)
 
     epsilon0 = H00

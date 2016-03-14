@@ -53,8 +53,9 @@ if __name__=='__main__':
     # write result
     print(len(g.klist), len(g.eng_list), len(surf_spectral), len(surf_spectral[0]))
     file = open('surface.dat', 'w')
+    print(g.dict['mode'], file=file)
     for i in range(len(g.klist)):
         for j in range(len(g.eng_list)):
-            print('{0:4f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}    {5:8f}    {6:8f}    {7:8f}'.format(i, g.kd[i],
+            print('{0:4d}    {1:12f}    {2:10f}    {3:10f}    {4:10f}    {5:12f}    {6:12f}    {7:12f}'.format(i, g.kd[i],
             g.klist[i][0], g.klist[i][1], g.klist[i][2], g.eng_list[j], surf_spectral[i][j], surf_modified_spectral[i][j]), file=file)
     file.close()
