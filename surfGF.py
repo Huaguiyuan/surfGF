@@ -4,11 +4,7 @@ from inputGF import *
 import iteration
 
 
-def point_scale(pt, a):
-    # point_scale, including rpt and kpt, if it is rpt, put a as lattice, if it is kpt, put a as inversed lattice
-    pt_scaled = a[0, :] * pt[0] + a[1, :] * pt[1] + a[2, :] * pt[2]
-    pt_scaled = np.array(pt_scaled, dtype='float')
-    return pt_scaled
+
 
 
 def construct_H00_H01(g, kpt):
@@ -52,13 +48,13 @@ def construct_H00_H01(g, kpt):
 
             if atom_layer[num_atom_layer] != 'None':
                 for k in atom_layer[num_atom_layer]:
-                    hamij += np.exp(1j * np.dot(point_scale(kpt, g.b), point_scale(g.rpt[k], g.a))) * (
+                    hamij += np.exp(1j * np.dot(g.point_scale(kpt, g.b), g.point_scale(g.rpt[k], g.a))) * (
                         g.hamr[:, :, k] + 1j * g.hami[:, :, k])  # *g.weight[k]
             H00[g.num_wann * i:g.num_wann * (i + 1), g.num_wann * j:g.num_wann * (j + 1)] = hamij
 
             if atom_layer1[num_atom_layer1] != 'None':
                 for k1 in atom_layer1[num_atom_layer1]:
-                    hamij1 += np.exp(1j * np.dot(point_scale(kpt, g.b), point_scale(g.rpt[k1], g.a))) * (
+                    hamij1 += np.exp(1j * np.dot(g.point_scale(kpt, g.b), g.point_scale(g.rpt[k1], g.a))) * (
                         g.hamr[:, :, k1] + 1j * g.hami[:, :, k1])  # *g.weight[k]
             H01[g.num_wann * i:g.num_wann * (i + 1), g.num_wann * j:g.num_wann * (j + 1)] = hamij1
 

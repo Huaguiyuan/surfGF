@@ -6,9 +6,9 @@ from surfGF import *
 g = Input()
 
 
-#klist = [[0,0.041667,0]]
+g.klist = [[0,0.041667,0]]
 
-eng_list = [4.1414, 4.4914, 4.6419]
+g.eng_list = [4.1414, 4.4914, 4.6419]
 
 
 surf_spectral=[]

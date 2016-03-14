@@ -1,5 +1,6 @@
 # Read input parameters and files
 import numpy as np
+import numpy.linalg as LA
 import matplotlib.pyplot as plt
 
 
@@ -98,7 +99,7 @@ class Input:
             kx += list(np.linspace(kpath[i][0], kpath[i + 1][0], num, endpoint=False))
             ky += list(np.linspace(kpath[i][1], kpath[i + 1][1], num, endpoint=False))
             kz += list(np.linspace(kpath[i][2], kpath[i + 1][2], num, endpoint=False))
-        klist = [kpath[0]]
+        klist = []
         for i in range(len(kx)):
             klist.append([kx[i], ky[i], kz[i]])
 
@@ -131,11 +132,15 @@ class Input:
     def get_k_distance(self, klist):
         kd = [0]
         tmp = 0
+        klist = np.array(klist, dtype='float')
         for i in range(len(klist) - 1):
-            tmp += np.sqrt((klist[i + 1][0] - klist[i][0]) ** 2 + (klist[i + 1][1] - klist[i][1]) ** 2 + (
-                klist[i + 1][2] - klist[i][2]) ** 2)
+            tmp += LA.norm(self.point_scale(klist[i+1] - klist[i], self.b))
             kd.append(tmp)
         return kd
-
+    def point_scale(self, pt, a):
+        # point_scale, including rpt and kpt, if it is rpt, put a as lattice, if it is kpt, put a as inversed lattice
+        pt_scaled = a[0, :] * pt[0] + a[1, :] * pt[1] + a[2, :] * pt[2]
+        pt_scaled = np.array(pt_scaled, dtype='float')
+        return pt_scaled
 #g = Input()
-#g.gen_klist_from_bz(g.dict['k_num'], g.dict['k_vertex'])
+#print(g.kd)
